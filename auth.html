@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Xyphor Funded — Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #05050f;
+    --card: #0f0f25;
+    --border: rgba(120,80,255,0.18);
+    --accent: #7c3aed;
+    --accent2: #a855f7;
+    --lime: #c8ff00;
+    --text: #e8e0ff;
+    --muted: #8878aa;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow-x: hidden;
+  }
+  body::before {
+    content:'';
+    position:fixed; inset:0;
+    background-image:
+      linear-gradient(rgba(124,58,237,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(124,58,237,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events:none; z-index:0;
+  }
+  .orb1 {
+    position:fixed; width:500px; height:500px;
+    background: radial-gradient(circle, rgba(124,58,237,0.12) 0%, transparent 70%);
+    top:-150px; left:-150px; pointer-events:none; z-index:0;
+  }
+  .orb2 {
+    position:fixed; width:400px; height:400px;
+    background: radial-gradient(circle, rgba(200,255,0,0.06) 0%, transparent 70%);
+    bottom:-100px; right:-100px; pointer-events:none; z-index:0;
+  }
+
+  /* NAV */
+  nav {
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 16px 24px;
+    background: rgba(5,5,15,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo {
+    font-family:'Orbitron',sans-serif;
+    font-size: 20px; font-weight:900;
+    letter-spacing:2px;
+    background: linear-gradient(135deg, #a855f7, #c8ff00);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    text-decoration:none;
+  }
+
+  /* CARD */
+  .auth-card {
+    position:relative; z-index:1;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 40px 36px;
+    width: 100%;
+    max-width: 420px;
+    margin: 100px 24px 40px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(124,58,237,0.08);
+    animation: fadeUp 0.5s ease both;
+  }
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(24px); }
+    to { opacity:1; transform:translateY(0); }
+  }
+
+  .auth-logo {
+    font-family:'Orbitron',sans-serif;
+    font-size:22px; font-weight:900;
+    letter-spacing:2px;
+    background: linear-gradient(135deg, #a855f7, #c8ff00);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    text-align:center; margin-bottom:6px;
+  }
+  .auth-sub {
+    text-align:center; color:var(--muted);
+    font-size:13px; margin-bottom:28px;
+  }
+
+  /* TABS */
+  .auth-tabs {
+    display:flex;
+    background: rgba(255,255,255,0.04);
+    border-radius:10px; overflow:hidden;
+    margin-bottom:28px;
+    border: 1px solid var(--border);
+  }
+  .auth-tab {
+    flex:1; padding:12px;
+    text-align:center; cursor:pointer;
+    font-weight:700; font-size:13px;
+    letter-spacing:1px; text-transform:uppercase;
+    color:var(--muted); transition: all 0.2s;
+    border:none; background:transparent;
+    font-family:'Syne',sans-serif;
+  }
+  .auth-tab.active {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color:#fff;
+  }
+
+  /* SOCIAL BUTTONS */
+  .social-btns { display:flex; flex-direction:column; gap:10px; margin-bottom:20px; }
+  .social-btn {
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    padding:12px; border-radius:10px;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.03);
+    color:var(--text); font-family:'Syne',sans-serif;
+    font-weight:600; font-size:13px; cursor:pointer;
+    transition: all 0.2s;
+  }
+  .social-btn:hover { border-color:var(--accent2); background: rgba(124,58,237,0.08); }
+  .social-icon { width:18px; height:18px; }
+
+  /* DIVIDER */
+  .divider {
+    display:flex; align-items:center; gap:12px;
+    margin-bottom:20px; color:var(--muted); font-size:12px;
+  }
+  .divider::before, .divider::after {
+    content:''; flex:1; height:1px; background:var(--border);
+  }
+
+  /* FORM */
+  .form-group { margin-bottom:16px; }
+  .form-label {
+    display:block; font-size:12px; font-weight:700;
+    letter-spacing:1px; text-transform:uppercase;
+    color:var(--muted); margin-bottom:8px;
+  }
+  .form-input {
+    width:100%; padding:12px 16px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius:10px; color:var(--text);
+    font-family:'Syne',sans-serif; font-size:14px;
+    outline:none; transition: border-color 0.2s;
+  }
+  .form-input:focus { border-color:var(--accent2); }
+  .form-input::placeholder { color:var(--muted); }
+
+  /* PASSWORD FIELD */
+  .pass-wrap { position:relative; }
+  .pass-toggle {
+    position:absolute; right:14px; top:50%;
+    transform:translateY(-50%);
+    background:none; border:none; cursor:pointer;
+    color:var(--muted); font-size:16px;
+  }
+
+  /* FORGOT */
+  .forgot {
+    text-align:right; margin-top:-8px; margin-bottom:16px;
+  }
+  .forgot a {
+    color:var(--accent2); font-size:12px; text-decoration:none;
+  }
+  .forgot a:hover { text-decoration:underline; }
+
+  /* SUBMIT BTN */
+  .btn-submit {
+    width:100%; padding:14px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color:#fff; border:none; border-radius:10px;
+    font-family:'Syne',sans-serif; font-weight:700;
+    font-size:14px; cursor:pointer; letter-spacing:1px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 0 20px rgba(124,58,237,0.3);
+    margin-bottom:16px;
+  }
+  .btn-submit:hover { transform:translateY(-2px); box-shadow: 0 0 35px rgba(124,58,237,0.5); }
+
+  /* SWITCH */
+  .switch-text {
+    text-align:center; font-size:13px; color:var(--muted);
+  }
+  .switch-text a { color:var(--accent2); text-decoration:none; font-weight:700; }
+
+  /* TERMS */
+  .terms {
+    text-align:center; font-size:11px; color:var(--muted);
+    margin-top:12px; line-height:1.6;
+  }
+  .terms a { color:var(--accent2); text-decoration:none; }
+
+  /* SUCCESS MESSAGE */
+  .success-msg {
+    display:none;
+    background: rgba(200,255,0,0.08);
+    border: 1px solid rgba(200,255,0,0.3);
+    border-radius:10px; padding:14px;
+    text-align:center; color:var(--lime);
+    font-size:13px; font-weight:600;
+    margin-bottom:16px;
+  }
+
+  /* ERROR Message */
+  .error-msg {
+    display:none;
+    background: rgba(255,60,60,0.08);
+    border: 1px solid rgba(255,60,60,0.3);
+    border-radius:10px; padding:14px;
+    text-align:center; color:#ff6b6b;
+    font-size:13px; font-weight:600;
+    margin-bottom:16px;
+  }
+
+  /* Phone input */
+  .phone-wrap { display:flex; gap:8px; }
+  .country-code {
+    width:80px; padding:12px 8px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius:10px; color:var(--text);
+    font-family:'Syne',sans-serif; font-size:14px;
+    outline:none;
+  }
+
+  @media(max-width:480px) {
+    .auth-card { padding:28px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="orb1"></div>
+<div class="orb2"></div>
+
+<nav>
+  <a href="index.html" class="logo">XYPHOR</a>
+</nav>
+
+<div class="auth-card">
+  <div class="auth-logo">XYPHOR FUNDED</div>
+  <div class="auth-sub">Elite Prop Trading Firm</div>
+
+  <!-- TABS -->
+  <div class="auth-tabs">
+    <button class="auth-tab active" onclick="showTab('login')">Login</button>
+    <button class="auth-tab" onclick="showTab('register')">Register</button>
+  </div>
+
+  <!-- SUCCESS / ERROR -->
+  <div class="success-msg" id="successMsg">✅ Email verification sent! Please check your inbox.</div>
+  <div class="error-msg" id="errorMsg">❌ Something went wrong. Please try again.</div>
+
+  <!-- LOGIN FORM -->
+  <div id="loginForm">
+    <!-- Social Login -->
+    <div class="social-btns">
+      <button class="social-btn" onclick="socialLogin('google')">
+        <svg class="social-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Continue with Google
+      </button>
+      <button class="social-btn" onclick="socialLogin('phone')">
+        📱 Continue with Phone Number
+      </button>
+    </div>
+
+    <div class="divider">or login with email</div>
+
+    <div class="form-group">
+      <label class="form-label">Email Address</label>
+      <input type="email" class="form-input" id="loginEmail" placeholder="trader@example.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <div class="pass-wrap">
+        <input type="password" class="form-input" id="loginPass" placeholder="Enter your password">
+        <button class="pass-toggle" onclick="togglePass('loginPass', this)">👁</button>
+      </div>
+    </div>
+    <div class="forgot"><a href="#">Forgot Password?</a></div>
+    <button class="btn-submit" onclick="handleLogin()">Login to Dashboard</button>
+    <div class="switch-text">Don't have an account? <a href="#" onclick="showTab('register')">Register</a></div>
+  </div>
+
+  <!-- REGISTER FORM -->
+  <div id="registerForm" style="display:none;">
+    <div class="social-btns">
+      <button class="social-btn" onclick="socialLogin('google')">
+        <svg class="social-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Continue with Google
+      </button>
+      <button class="social-btn" onclick="socialLogin('phone')">
+        📱 Continue with Phone Number
+      </button>
+    </div>
+
+    <div class="divider">or register with email</div>
+
+    <div class="form-group">
+      <label class="form-label">Full Name</label>
+      <input type="text" class="form-input" id="regName" placeholder="Your full name">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email Address</label>
+      <input type="email" class="form-input" id="regEmail" placeholder="trader@example.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Phone Number</label>
+      <div class="phone-wrap">
+        <input type="text" class="form-input country-code" value="+91" placeholder="+91">
+        <input type="tel" class="form-input" id="regPhone" placeholder="9876543210" style="flex:1">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <div class="pass-wrap">
+        <input type="password" class="form-input" id="regPass" placeholder="Min 8 characters">
+        <button class="pass-toggle" onclick="togglePass('regPass', this)">👁</button>
+      </div>
+    </div>
+    <button class="btn-submit" onclick="handleRegister()">Create Account</button>
+    <div class="switch-text">Already have an account? <a href="#" onclick="showTab('login')">Login</a></div>
+    <div class="terms">By registering, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></div>
+  </div>
+</div>
+
+<script>
+  function showTab(tab) {
+    document.querySelectorAll('.auth-tab').forEach((t,i) => {
+      t.classList.toggle('active', (i===0 && tab==='login') || (i===1 && tab==='register'));
+    });
+    document.getElementById('loginForm').style.display = tab==='login' ? 'block' : 'none';
+    document.getElementById('registerForm').style.display = tab==='register' ? 'block' : 'none';
+    hideMessages();
+  }
+
+  function togglePass(id, btn) {
+    const input = document.getElementById(id);
+    if(input.type === 'password') { input.type = 'text'; btn.textContent = '🙈'; }
+    else { input.type = 'password'; btn.textContent = '👁'; }
+  }
+
+  function showSuccess(msg) {
+    const el = document.getElementById('successMsg');
+    el.textContent = msg; el.style.display = 'block';
+    document.getElementById('errorMsg').style.display = 'none';
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('errorMsg');
+    el.textContent = msg; el.style.display = 'block';
+    document.getElementById('successMsg').style.display = 'none';
+  }
+
+  function hideMessages() {
+    document.getElementById('successMsg').style.display = 'none';
+    document.getElementById('errorMsg').style.display = 'none';
+  }
+
+  function handleLogin() {
+    const email = document.getElementById('loginEmail').value;
+    const pass = document.getElementById('loginPass').value;
+    if(!email || !pass) { showError('❌ Please fill all fields!'); return; }
+    if(!email.includes('@')) { showError('❌ Please enter a valid email!'); return; }
+    // Supabase integration aayegi yahan
+    showSuccess('✅ Login successful! Redirecting to dashboard...');
+    setTimeout(() => { window.location.href = 'dashboard.html'; }, 1500);
+  }
+
+  function handleRegister() {
+    const name = document.getElementById('regName').value;
+    const email = document.getElementById('regEmail').value;
+    const pass = document.getElementById('regPass').value;
+    if(!name || !email || !pass) { showError('❌ Please fill all fields!'); return; }
+    if(!email.includes('@')) { showError('❌ Please enter a valid email!'); return; }
+    if(pass.length < 8) { showError('❌ Password must be at least 8 characters!'); return; }
+    // Supabase integration aayegi yahan
+    showSuccess('✅ Account created! Verification email sent. Please check your inbox.');
+  }
+
+  function socialLogin(type) {
+    if(type === 'google') showSuccess('🔄 Redirecting to Google login...');
+    if(type === 'phone') showSuccess('📱 Phone login coming soon!');
+  }
+</script>
+</body>
+</html>
