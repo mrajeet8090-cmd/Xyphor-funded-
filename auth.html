@@ -339,6 +339,23 @@
 </div>
 
 <script>
+  // Supabase Setup
+  const SUPABASE_URL = 'https://cpbfxijyadaffyzaffax.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNwYmZ4aWp5YWRhZmZ5emFmZmF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE5NDE2MTgsImV4cCI6MjA4NzUxNzYxOH0.u7iZ9K2HECYicGlQ2EWkms3N4rOY7r4_N5jFsmj6ERI';
+
+  async function supabaseFetch(endpoint, method, body) {
+    const res = await fetch(SUPABASE_URL + endpoint, {
+      method: method || 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY
+      },
+      body: body ? JSON.stringify(body) : undefined
+    });
+    return res.json();
+  }
+
   function showTab(tab) {
     document.querySelectorAll('.auth-tab').forEach((t,i) => {
       t.classList.toggle('active', (i===0 && tab==='login') || (i===1 && tab==='register'));
@@ -371,30 +388,58 @@
     document.getElementById('errorMsg').style.display = 'none';
   }
 
-  function handleLogin() {
+  async function handleLogin() {
     const email = document.getElementById('loginEmail').value;
     const pass = document.getElementById('loginPass').value;
     if(!email || !pass) { showError('❌ Please fill all fields!'); return; }
     if(!email.includes('@')) { showError('❌ Please enter a valid email!'); return; }
-    // Supabase integration aayegi yahan
-    showSuccess('✅ Login successful! Redirecting to dashboard...');
-    setTimeout(() => { window.location.href = 'dashboard.html'; }, 1500);
+
+    showSuccess('🔄 Logging in...');
+    const data = await supabaseFetch('/auth/v1/token?grant_type=password', 'POST', { email, password: pass });
+
+    if(data.access_token) {
+      localStorage.setItem('xyphor_token', data.access_token);
+      localStorage.setItem('xyphor_user', JSON.stringify(data.user));
+      showSuccess('✅ Login successful! Redirecting...');
+      setTimeout(() => { window.location.href = 'dashboard.html'; }, 1200);
+    } else {
+      showError('❌ ' + (data.error_description || 'Invalid email or password!'));
+    }
   }
 
-  function handleRegister() {
+  async function handleRegister() {
     const name = document.getElementById('regName').value;
     const email = document.getElementById('regEmail').value;
     const pass = document.getElementById('regPass').value;
     if(!name || !email || !pass) { showError('❌ Please fill all fields!'); return; }
     if(!email.includes('@')) { showError('❌ Please enter a valid email!'); return; }
     if(pass.length < 8) { showError('❌ Password must be at least 8 characters!'); return; }
-    // Supabase integration aayegi yahan
-    showSuccess('✅ Account created! Verification email sent. Please check your inbox.');
+
+    showSuccess('🔄 Creating account...');
+    const data = await supabaseFetch('/auth/v1/signup', 'POST', {
+      email, password: pass,
+      data: { full_name: name }
+    });
+
+    if(data.id || data.user) {
+      showSuccess('✅ Account created! Please check your email to verify your account.');
+    } else {
+      showError('❌ ' + (data.error_description || data.msg || 'Registration failed!'));
+    }
   }
 
-  function socialLogin(type) {
-    if(type === 'google') showSuccess('🔄 Redirecting to Google login...');
-    if(type === 'phone') showSuccess('📱 Phone login coming soon!');
+  async function socialLogin(type) {
+    if(type === 'google') {
+      window.location.href = SUPABASE_URL + '/auth/v1/authorize?provider=google&redirect_to=' + window.location.origin + '/dashboard.html';
+    }
+    if(type === 'phone') showError('📱 Phone login coming soon!');
+  }
+
+  // Check if already logged in
+  window.onload = function() {
+    if(localStorage.getItem('xyphor_token')) {
+      window.location.href = 'dashboard.html';
+    }
   }
 </script>
 </body>
